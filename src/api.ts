@@ -21,7 +21,10 @@ import {
   VerifyResult,
   KeyPair,
   BlindSignRequest,
-} from '@zkp-ld/rdf-proofs-wasm';
+  ellipticElGamalKeyGen as ellipticElGamalKeyGenWasm,
+  getEncryptedUid as getEncryptedUidWasm,
+  ellipticElGamalDecrypt as ellipticElGamalDecryptWasm,
+} from '@dorakemon/rdf-proofs-wasm';
 import * as jsonld from 'jsonld';
 import {
   DeriveProofOptions,
@@ -62,6 +65,7 @@ export const sign = async (
   vc: VC,
   keyPair: jsonld.JsonLdDocument,
   documentLoader: DocumentLoader,
+  secret?: Uint8Array
 ): Promise<VC> => {
   await initializeWasm();
 
@@ -69,7 +73,7 @@ export const sign = async (
 
   const keyPairRDF = await jsonldToRDF(keyPair, documentLoader);
 
-  const signedProofRDF = signWasm(documentRDF, proofRDF, keyPairRDF);
+  const signedProofRDF = signWasm(documentRDF, proofRDF, keyPairRDF, secret);
   const proof = await jsonldProofFromRDF(signedProofRDF, documentLoader);
 
   document.proof = proof;
@@ -264,6 +268,7 @@ export const deriveProof = async (
     withPpid: options?.withPpid,
     predicates: predicatesRDF,
     circuits: options?.circuits,
+    openerPubKey: options?.openerPubKey,
   });
 
   const jsonldVP = await jsonldVPFromRDF(vp, context, documentLoader);
@@ -298,3 +303,25 @@ export const verifyProof = async (
 
   return verified;
 };
+
+export const ellipticElGamalKeyGen = async () => {
+  await initializeWasm();
+
+  const keypair = ellipticElGamalKeyGenWasm();
+
+  return keypair;
+}
+
+export const getEncryptedUid = async (uid: Uint8Array) => {
+  await initializeWasm();
+
+  const encryptedUid = getEncryptedUidWasm(uid);
+
+  return encryptedUid
+}
+
+export const ellipticElGamalDecrypt = async (secretKey: string, cipherText: string) => {
+  await initializeWasm();
+
+  return ellipticElGamalDecryptWasm(secretKey, cipherText);
+}

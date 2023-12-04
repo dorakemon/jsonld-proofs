@@ -1,4 +1,4 @@
-import { BlindSignRequest, CircuitString } from '@zkp-ld/rdf-proofs-wasm';
+import { BlindSignRequest, CircuitString } from '@dorakemon/rdf-proofs-wasm';
 import * as jsonld from 'jsonld';
 import { JsonLdArray, RemoteDocument, Url } from 'jsonld/jsonld-spec';
 
@@ -66,10 +66,14 @@ export interface DeriveProofOptions {
   readonly withPpid?: boolean;
   readonly predicates?: jsonld.JsonLdDocument[];
   readonly circuits?: Map<string, CircuitString>;
+  readonly openerPubKey?: string;
 }
 
 export interface VerifyProofOptions {
   readonly challenge?: string;
   readonly domain?: string;
   readonly snarkVerifyingKeys?: Map<string, string>;
+  readonly openerPubKey?: string;
 }
+
+export { EllipticElGamalKeyPair } from '@dorakemon/rdf-proofs-wasm';

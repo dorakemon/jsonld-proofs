@@ -9,5 +9,8 @@ export {
   blindVerify,
   deriveProof,
   verifyProof,
+  ellipticElGamalDecrypt,
+  ellipticElGamalKeyGen,
+  getEncryptedUid,
 } from './api';
 export { VC, VCPair } from './types';
